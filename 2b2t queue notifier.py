@@ -3,6 +3,7 @@ import os
 import sys
 from data import pygame_textinput
 import time
+import smtplib
 
 
 def load_image(name, color_key=None):
@@ -25,11 +26,24 @@ def terminate():
     sys.exit()
 
 
+def send(mail, pos):
+    smtpObj.sendmail('2b2t.notifier@gmail.com', mail, str("Hey, dude, you are already in the " + pos +
+                                                          " place in the queue, do " +
+                                                          'not forget about the server. a little ' +
+                                                          ' more and you will be able to plungle into the darkness ' +
+                                                          'and despair on 2b2t.'))
+
+
 def main():
     fon = load_image('back.jpg')
     font = pygame.font.Font('data/Font.ttf', 40)
     textinput_username = pygame_textinput.TextInput()
     textinput_email = pygame_textinput.TextInput()
+    send_100 = False
+    send_50 = False
+    send_25 = False
+    send_10 = False
+    send_3 = False
     try:
         load = open('data/save.txt', 'r')
         data = ''.join(load.read()).split('\n')
@@ -86,13 +100,13 @@ def main():
         disp_cp = font.render(str(cur_pos), True, (205, 205, 205))
         disp_sp = font.render(str(start_pos), True, (205, 205, 205))
         wmin = str(int(waiting_time // 60 % 60))
-        if int(wmin) <= 10:
+        if int(wmin) < 10:
             wmin = '0' + wmin
         wsec = str(int(waiting_time % 60))
-        if int(wsec) <= 10:
+        if int(wsec) < 10:
             wsec = '0' + wsec
         emin = str(int(estim_time // 60 % 60))
-        if int(emin) <= 10:
+        if int(emin) < 10:
             emin = '0' + emin
         disp_wt = font.render(str(int(waiting_time // 3600)) + ':' + wmin + ':' + wsec, True, (205, 205, 205))
         disp_et = font.render(str(int(estim_time // 3600)) + ':' + emin,
@@ -100,8 +114,22 @@ def main():
 
         screen.blit(disp_cp, (660, 440))
         screen.blit(disp_sp, (660, 500))
-        screen.blit(disp_wt, (660, 560))
-        screen.blit(disp_et, (660, 620))
+        screen.blit(disp_wt, (660, 565))
+        screen.blit(disp_et, (660, 625))
+
+        if cur_pos <= 100 < start_pos and not send_100:
+            send(textinput_email.get_text(), cur_pos)
+            send_100 = True
+        if cur_pos <= 50 < start_pos and not send_50:
+            send(textinput_email.get_text(), cur_pos)
+            send_50 = True
+        if cur_pos <= 25 < start_pos and not send_25:
+            send(textinput_email.get_text(), cur_pos)
+            send_25 = True
+        if cur_pos <= 3 < start_pos and not send_3:
+            send(textinput_email.get_text(), cur_pos)
+            send_3 = True
+
 
         pygame.display.flip()
         clock.tick(30)
@@ -112,6 +140,11 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption('2b2t queue notifier')
 pygame.display.set_icon(load_image('icon.png'))
 clock = pygame.time.Clock()
+
+smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
+smtpObj.starttls()
+smtpObj.login('2b2t.notifier@gmail.com', '277353GayBot')
+
 
 startTime = time.time()
 main()
