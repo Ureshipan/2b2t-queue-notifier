@@ -32,6 +32,9 @@ def terminate():
 def send(mail, pos):
     print('отправка')
     try:
+        smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
+        smtpObj.starttls()
+        smtpObj.login('2b2t.notifier@gmail.com', '277353GayBot')
         smtpObj.sendmail('2b2t.notifier@gmail.com', mail, str("Hey, dude, you are already in the " + str(pos) +
                                                               " place in the queue, do " +
                                                               'not forget about the server. a little ' +
@@ -39,6 +42,7 @@ def send(mail, pos):
                                                               'and despair on 2b2t.'))
     except Exception as e:
         print(e)
+
 
 
 def main():
@@ -133,6 +137,9 @@ def main():
         if cur_pos <= 25 < start_pos and not send_25:
             send(textinput_email.get_text(), cur_pos)
             send_25 = True
+        if cur_pos <= 10 < start_pos and not send_10:
+            send(textinput_email.get_text(), cur_pos)
+            send_10 = True
         if cur_pos <= 3 < start_pos and not send_3:
             send(textinput_email.get_text(), cur_pos)
             send_3 = True
