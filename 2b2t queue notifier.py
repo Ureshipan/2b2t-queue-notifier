@@ -27,7 +27,8 @@ def terminate():
 
 
 def send(mail, pos):
-    smtpObj.sendmail('2b2t.notifier@gmail.com', mail, str("Hey, dude, you are already in the " + pos +
+    print('отправка')
+    smtpObj.sendmail('2b2t.notifier@gmail.com', mail, str("Hey, dude, you are already in the " + str(pos) +
                                                           " place in the queue, do " +
                                                           'not forget about the server. a little ' +
                                                           ' more and you will be able to plungle into the darkness ' +
