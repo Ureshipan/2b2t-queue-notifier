@@ -1,4 +1,5 @@
 from os import environ
+
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame
@@ -7,6 +8,7 @@ import sys
 from data import pygame_textinput
 import time
 import smtplib
+import getpass
 
 
 def load_image(name, color_key=None):
@@ -44,11 +46,11 @@ def send(mail, pos):
         print(e)
 
 
-
 def main():
+    global textinput_version
     fon = load_image('back.jpg')
     font = pygame.font.Font('data/Font.ttf', 40)
-    textinput_username = pygame_textinput.TextInput()
+    textinput_version = pygame_textinput.TextInput()
     textinput_email = pygame_textinput.TextInput()
     send_100 = False
     send_50 = False
@@ -58,10 +60,10 @@ def main():
     try:
         load = open('data/save.txt', 'r')
         data = ''.join(load.read()).split('\n')
-        textinput_username.set_text(data[0])
+        textinput_version.set_text(data[0])
         textinput_email.set_text(data[1])
         events = pygame.event.get()
-        textinput_username.update(events)
+        textinput_version.update(events)
         textinput_email.update(events)
         load.close()
     except:
@@ -84,7 +86,11 @@ def main():
                         f = 'u'
                     elif 40 <= pygame.mouse.get_pos()[0] <= 1240 and 320 <= pygame.mouse.get_pos()[1] <= 420:
                         f = 'e'
-        log_path = 'C:/Users/' + textinput_username.get_text() + '/AppData/Roaming/.minecraft/logs/latest.log'
+        if textinput_version.get_text() == '':
+            log_path = 'C:/Users/' + getpass.getuser() + '/AppData/Roaming/.minecraft/logs/latest.log'
+        else:
+            log_path = 'C:/Users/' + getpass.getuser() + '/AppData/Roaming/.minecraft/versions/' + textinput_version.get_text() + '/logs/latest.log'
+
         try:
             log_file = open(log_path, 'r')
             log = log_file.read().split()
@@ -98,14 +104,14 @@ def main():
             estim_time = waiting_time / (start_pos - cur_pos) * cur_pos
 
         save = open('data/save.txt', 'w')
-        save.writelines((textinput_username.get_text() + '\n', textinput_email.get_text()))
+        save.writelines((textinput_version.get_text() + '\n', textinput_email.get_text()))
         save.close()
 
         if f == 'u':
-            textinput_username.update(events)
+            textinput_version.update(events)
         else:
             textinput_email.update(events)
-        screen.blit(textinput_username.get_surface(), (80, 180))
+        screen.blit(textinput_version.get_surface(), (80, 180))
         screen.blit(textinput_email.get_surface(), (80, 340))
 
         disp_cp = font.render(str(cur_pos), True, (205, 205, 205))
@@ -144,7 +150,6 @@ def main():
             send(textinput_email.get_text(), cur_pos)
             send_3 = True
 
-
         pygame.display.flip()
         clock.tick(30)
 
@@ -158,7 +163,6 @@ clock = pygame.time.Clock()
 smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
 smtpObj.starttls()
 smtpObj.login('2b2t.notifier@gmail.com', '277353GayBot')
-
 
 startTime = time.time()
 main()
